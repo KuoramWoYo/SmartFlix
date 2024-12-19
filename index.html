@@ -19,7 +19,7 @@
         <h2>Cadastrar</h2>
         <input type="email" id="emailCadastro" placeholder="E-mail" required><br>
         <input type="password" id="senhaCadastro" placeholder="Senha" required><br>
-        <button onclick="cadastrarUsuario()">Cadastrar</button>
+        <button onclick="cadastrarUsuario()">Criar conta</button>
         <button onclick="mostrarLogin()">Já tenho uma conta</button>
     </div>
 
@@ -37,6 +37,11 @@
         <h2>Admin</h2>
         <p>Bem-vindo à área administrativa!</p>
         <button onclick="logout()">Sair</button>
+        <h3>Função de Admin:</h3>
+        <p>Apenas o admin pode usar essa função!</p>
+        <label for="uidAdmin">Insira o UID do admin para acessar:</label><br>
+        <input type="text" id="uidAdmin" placeholder="UID do Admin"><br>
+        <button onclick="verificarUID()">Verificar UID</button>
     </div>
 
     <!-- Tela de Usuário Comum -->
@@ -61,6 +66,9 @@
         const auth = firebase.auth();
         const firestore = firebase.firestore();
 
+        // E-mail do admin
+        const adminEmail = "admin@meusite.com"; // Altere para o seu e-mail de admin do Firebase
+
         // Exibe a tela de cadastro
         function mostrarCadastro() {
             document.getElementById("loginScreen").style.display = "none";
@@ -84,7 +92,7 @@
                     let isAdmin = false;
 
                     // Verifica se o e-mail é o do admin
-                    if (user.email === "admin@meusite.com") {
+                    if (user.email === adminEmail) {
                         isAdmin = true;
                     }
 
@@ -121,24 +129,15 @@
 
         // Função de verificação de admin
         function verificarSeAdmin(user) {
-            firestore.collection("usuarios").doc(user.uid).get()
-                .then((doc) => {
-                    if (doc.exists) {
-                        const usuarioData = doc.data();
-                        if (usuarioData.isAdmin) {
-                            // Se for admin, exibe tela de admin
-                            document.getElementById("loginScreen").style.display = "none";
-                            document.getElementById("adminScreen").style.display = "block";
-                        } else {
-                            // Se for usuário comum, exibe tela de usuário
-                            document.getElementById("loginScreen").style.display = "none";
-                            document.getElementById("userScreen").style.display = "block";
-                        }
-                    }
-                })
-                .catch((error) => {
-                    alert("Erro ao verificar dados do usuário: " + error.message);
-                });
+            if (user.email === adminEmail) {
+                // Se for admin, exibe tela de admin
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("adminScreen").style.display = "block";
+            } else {
+                // Se for usuário comum, exibe tela de usuário
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("userScreen").style.display = "block";
+            }
         }
 
         // Função de logout
@@ -150,6 +149,29 @@
             }).catch((error) => {
                 alert("Erro ao sair: " + error.message);
             });
+        }
+
+        // Função de verificação do UID
+        function verificarUID() {
+            const uid = document.getElementById("uidAdmin").value;
+            
+            firebase.firestore().collection("usuarios").doc(uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        if (userData.isAdmin) {
+                            alert("Você é o admin!");
+                            document.getElementById("adminScreen").style.display = "block";
+                        } else {
+                            alert("Este UID não corresponde a um admin.");
+                        }
+                    } else {
+                        alert("UID não encontrado.");
+                    }
+                })
+                .catch((error) => {
+                    alert("Erro ao verificar UID: " + error.message);
+                });
         }
     </script>
 </body>
