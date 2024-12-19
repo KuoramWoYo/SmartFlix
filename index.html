@@ -73,8 +73,10 @@
         /* Player de Vídeo Embed */
         #videoEmbed {
             margin-top: 20px;
-            width: 80%;
-            max-width: 800px;
+            width: 100%;
+            max-width: 560px;
+            height: 315px;
+            border: 1px solid transparent;
             display: none;
         }
     </style>
@@ -99,7 +101,7 @@
     </div>
 
     <!-- Player de Vídeo Embed -->
-    <div id="videoEmbed"></div>
+    <iframe id="videoEmbed" src="" allowfullscreen></iframe>
 
     <script>
         // Função para mostrar episódios quando clicar na série
@@ -108,18 +110,18 @@
             epList.style.display = (epList.style.display === "block") ? "none" : "block";
         }
 
-        // Função para carregar o embed do files.fm
+        // Função para carregar o iframe do files.fm
         function assistirEp(serie, episodio) {
-            // Exemplo de embed baseado no episódio e série
-            let embedCode = "";
-            if (serie === 'Kaiju No. 8' && episodio === 1) {
-                embedCode = `<script type="text/javascript" src="https://files.fm/embed/playerv2?hash=p27svuckdy&autoplay=off&autoload=off&w=100%25&h=auto&poster_src=https://files.fm/thumb_video_picture.php?i=p27svuckdy" id="filesfm_embed_js__p27svuckdy"></script>`;
+            // Exemplo de iframe baseado no episódio e série
+            let embedUrl = "";
+            if (serie === 'teste' && episodio === 1) {
+                embedUrl = "https://files.fm/u/k253a6as89&view=slideshow&autoplay=false";
             }
 
-            if (embedCode) {
-                // Adiciona o embed no container
+            if (embedUrl) {
+                // Adiciona o iframe no container
                 const videoEmbed = document.getElementById("videoEmbed");
-                videoEmbed.innerHTML = embedCode;
+                videoEmbed.src = embedUrl;
                 videoEmbed.style.display = "block"; // Exibe o player embed
             } else {
                 alert("Desculpe, este episódio não está disponível.");
