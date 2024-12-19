@@ -3,10 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Site</title>
+    <title>Catálogo de Séries</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        header {
+            background-color: #6200ea;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        nav {
+            background-color: #3700b3;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            padding: 20px;
+        }
+        .series {
+            margin-bottom: 20px;
+        }
+        .series h2 {
+            color: #6200ea;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .episode {
+            margin-left: 15px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bem-vindo ao Meu Site</h1>
-    <p>Este é um exemplo de site criado pelo celular!</p>
+    <!-- Cabeçalho -->
+    <header>
+        <h1>Catálogo de Séries</h1>
+    </header>
+
+    <!-- Navegação -->
+    <nav>
+        <a href="#serie1">Série 1</a>
+        <a href="#serie2">Série 2</a>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container">
+        <!-- Série 1 -->
+        <div class="series" id="serie1">
+            <h2>Série: Stranger Things</h2>
+            <p><strong>Temporadas:</strong> 4</p>
+            <div class="episode">
+                <h3>Temporada 1</h3>
+                <ul>
+                    <li>Episódio 1: O desaparecimento de Will</li>
+                    <li>Episódio 2: O outro lado</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Série 2 -->
+        <div class="series" id="serie2">
+            <h2>Série: The Witcher</h2>
+            <p><strong>Temporadas:</strong> 3</p>
+            <div class="episode">
+                <h3>Temporada 1</h3>
+                <ul>
+                    <li>Episódio 1: O começo do fim</li>
+                    <li>Episódio 2: Quatro marcas</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
