@@ -89,12 +89,12 @@
     <div class="series-container">
 
         <!-- Série de Teste -->
-        <div class="serie" onclick="mostrarEpisodios('teste')">
+        <div class="serie" onclick="mostrarEpisodios('Kaiju no. 8')">
             <p><strong>Série:</strong> Teste</p>
             <p><strong>Temporadas:</strong> 1</p>
-            <div class="ep-list" id="teste">
+            <div class="ep-list" id="Kaiju no. 8">
                 <p><strong>Episódios:</strong></p>
-                <div class="ep-item" onclick="assistirEp('teste', 1)">Episódio 1</div>
+                <div class="ep-item" onclick="assistirEp('Kaiju no. 8', 1)">Episódio 1</div>
             </div>
         </div>
 
@@ -114,7 +114,7 @@
         function assistirEp(serie, episodio) {
             // Exemplo de iframe baseado no episódio e série
             let embedUrl = "";
-            if (serie === 'teste' && episodio === 1) {
+            if (serie === 'Kaiju no. 8' && episodio === 1) {
                 embedUrl = "https://files.fm/u/k253a6as89&view=slideshow&autoplay=false";
             }
 
