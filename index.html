@@ -70,23 +70,8 @@
             background-color: #666;
         }
 
-        .btn-assistir {
-            background-color: #b39ddb;
-            color: black;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 15px;
-            font-size: 1rem;
-        }
-
-        .btn-assistir:hover {
-            background-color: #9575cd; /* Cor do hover */
-        }
-
-        /* Estilo para o player de vídeo */
-        #videoPlayer {
+        /* Player de Vídeo Embed */
+        #videoEmbed {
             margin-top: 20px;
             width: 80%;
             max-width: 800px;
@@ -113,11 +98,8 @@
 
     </div>
 
-    <!-- Player de Vídeo -->
-    <video id="videoPlayer" controls>
-        <source id="videoSource" type="video/mp4">
-        Seu navegador não suporta o elemento de vídeo.
-    </video>
+    <!-- Player de Vídeo Embed -->
+    <div id="videoEmbed"></div>
 
     <script>
         // Função para mostrar episódios quando clicar na série
@@ -126,23 +108,19 @@
             epList.style.display = (epList.style.display === "block") ? "none" : "block";
         }
 
-        // Função para simular o assistir episódio (agora com link do files.fm)
+        // Função para carregar o embed do files.fm
         function assistirEp(serie, episodio) {
-            // Exemplo de link de vídeo hospedado no files.fm
-            let videoUrl = "";
-            if (serie === 'teste' && episodio === 1) {
-                videoUrl = "<script type="text/javascript" src="https://files.fm/embed/playerv2?hash=p27svuckdy&autoplay=off&autoload=off&w=100%&h=auto&poster_src=https://files.fm/thumb_video_picture.php?i=p27svuckdy" id="filesfm_embed_js__p27svuckdy"></script>"; // Substitua pelo link real
+            // Exemplo de embed baseado no episódio e série
+            let embedCode = "";
+            if (serie === 'Kaiju No. 8' && episodio === 1) {
+                embedCode = `<script type="text/javascript" src="https://files.fm/embed/playerv2?hash=p27svuckdy&autoplay=off&autoload=off&w=100%25&h=auto&poster_src=https://files.fm/thumb_video_picture.php?i=p27svuckdy" id="filesfm_embed_js__p27svuckdy"></script>`;
             }
 
-            if (videoUrl) {
-                // Define o link do vídeo no player
-                const videoPlayer = document.getElementById("videoPlayer");
-                const videoSource = document.getElementById("videoSource");
-
-                videoSource.src = videoUrl;
-                videoPlayer.style.display = "block"; // Exibe o player de vídeo
-                videoPlayer.load(); // Carrega o vídeo
-                videoPlayer.play(); // Começa a reprodução
+            if (embedCode) {
+                // Adiciona o embed no container
+                const videoEmbed = document.getElementById("videoEmbed");
+                videoEmbed.innerHTML = embedCode;
+                videoEmbed.style.display = "block"; // Exibe o player embed
             } else {
                 alert("Desculpe, este episódio não está disponível.");
             }
