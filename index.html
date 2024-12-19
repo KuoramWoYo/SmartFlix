@@ -3,33 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assista ao Meu EP</title>
+    <title>Login e Cadastro</title>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .screen { display: none; }
+        #loginScreen, #cadastroScreen { display: block; }
+    </style>
 </head>
 <body>
-    <h1>Assista ao Meu EP</h1>
-    <p>Clique no botão abaixo para assistir ao EP:</p>
+    <!-- Tela de Cadastro -->
+    <div id="cadastroScreen" class="screen">
+        <h2>Cadastrar</h2>
+        <input type="email" id="emailCadastro" placeholder="E-mail" required><br>
+        <input type="password" id="senhaCadastro" placeholder="Senha" required><br>
+        <button onclick="cadastrarUsuario()">Cadastrar</button>
+        <button onclick="mostrarLogin()">Já tenho uma conta</button>
+    </div>
 
-    <!-- Botão para carregar o vídeo -->
-    <button id="playButton" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Assistir ao EP</button>
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="screen">
+        <h2>Login</h2>
+        <input type="email" id="emailLogin" placeholder="E-mail" required><br>
+        <input type="password" id="senhaLogin" placeholder="Senha" required><br>
+        <button onclick="loginUsuario()">Entrar</button>
+        <button onclick="mostrarCadastro()">Criar conta</button>
+    </div>
 
-    <!-- Div onde o vídeo será carregado -->
-    <div id="videoContainer"></div>
+    <!-- Tela de Admin -->
+    <div id="adminScreen" class="screen">
+        <h2>Admin</h2>
+        <p>Bem-vindo à área administrativa!</p>
+        <button onclick="logout()">Sair</button>
+    </div>
+
+    <!-- Tela de Usuário Comum -->
+    <div id="userScreen" class="screen">
+        <h2>Usuário Comum</h2>
+        <p>Bem-vindo ao seu perfil!</p>
+        <button onclick="logout()">Sair</button>
+    </div>
 
     <script>
-        document.getElementById('playButton').addEventListener('click', function() {
-            // Código do script para o player do Files.fm
-            var script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = 'https://files.fm/embed/playerv2?hash=p27svuckdy&autoplay=off&autoload=off&w=100%&h=auto&poster_src=https://files.fm/thumb_video_picture.php?i=p27svuckdy';
-            script.id = 'filesfm_embed_js__p27svuckdy';
-            
-            // Inserir o script no contêiner do vídeo
-            document.getElementById('videoContainer').appendChild(script);
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID",
+            measurementId: "SEU_MEASUREMENT_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const firestore = firebase.firestore();
 
-            // Desabilitar o botão após o clique
-            document.getElementById('playButton').disabled = true;
-            document.getElementById('playButton').textContent = "Vídeo carregando...";
-        });
+        // Exibe a tela de cadastro
+        function mostrarCadastro() {
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("cadastroScreen").style.display = "block";
+        }
+
+        // Exibe a tela de login
+        function mostrarLogin() {
+            document.getElementById("cadastroScreen").style.display = "none";
+            document.getElementById("loginScreen").style.display = "block";
+        }
+
+        // Função de cadastro
+        function cadastrarUsuario() {
+            const email = document.getElementById("emailCadastro").value;
+            const senha = document.getElementById("senhaCadastro").value;
+
+            firebase.auth().createUserWithEmailAndPassword(email, senha)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    let isAdmin = false;
+
+                    // Verifica se o e-mail é o do admin
+                    if (user.email === "admin@meusite.com") {
+                        isAdmin = true;
+                    }
+
+                    // Armazenar no Firestore com o campo isAdmin
+                    firestore.collection("usuarios").doc(user.uid).set({
+                        email: user.email,
+                        displayName: user.email.split("@")[0],  // Usando o e-mail para o nome
+                        isAdmin: isAdmin,
+                        banido: false
+                    }).then(() => {
+                        alert("Conta criada com sucesso!");
+                        mostrarLogin();
+                    });
+                })
+                .catch((error) => {
+                    alert("Erro ao criar conta: " + error.message);
+                });
+        }
+
+        // Função de login
+        function loginUsuario() {
+            const email = document.getElementById("emailLogin").value;
+            const senha = document.getElementById("senhaLogin").value;
+
+            firebase.auth().signInWithEmailAndPassword(email, senha)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    verificarSeAdmin(user);
+                })
+                .catch((error) => {
+                    alert("Erro ao fazer login: " + error.message);
+                });
+        }
+
+        // Função de verificação de admin
+        function verificarSeAdmin(user) {
+            firestore.collection("usuarios").doc(user.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const usuarioData = doc.data();
+                        if (usuarioData.isAdmin) {
+                            // Se for admin, exibe tela de admin
+                            document.getElementById("loginScreen").style.display = "none";
+                            document.getElementById("adminScreen").style.display = "block";
+                        } else {
+                            // Se for usuário comum, exibe tela de usuário
+                            document.getElementById("loginScreen").style.display = "none";
+                            document.getElementById("userScreen").style.display = "block";
+                        }
+                    }
+                })
+                .catch((error) => {
+                    alert("Erro ao verificar dados do usuário: " + error.message);
+                });
+        }
+
+        // Função de logout
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                document.getElementById("adminScreen").style.display = "none";
+                document.getElementById("userScreen").style.display = "none";
+                mostrarLogin();
+            }).catch((error) => {
+                alert("Erro ao sair: " + error.message);
+            });
+        }
     </script>
 </body>
 </html>
