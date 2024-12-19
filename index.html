@@ -54,20 +54,17 @@
     <script>
         // Configuração do Firebase
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID",
-            measurementId: "SEU_MEASUREMENT_ID"
+            apiKey: "AIzaSyCagqHkM1hi6ppzNjs1n_9Q6grM6vKNIkw",
+            authDomain: "smartflix-2897c.firebaseapp.com",
+            projectId: "smartflix-2897c",
+            storageBucket: "smartflix-2897c.firebasestorage.app",
+            messagingSenderId: "40417251997",
+            appId: "1:40417251997:web:4c12974a0dba3965767a74",
+            measurementId: "G-4BZKY8RJZS"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const firestore = firebase.firestore();
-
-        // E-mail do admin
-        const adminEmail = "admin@meusite.com"; // Altere para o seu e-mail de admin do Firebase
 
         // Exibe a tela de cadastro
         function mostrarCadastro() {
@@ -91,16 +88,11 @@
                     const user = userCredential.user;
                     let isAdmin = false;
 
-                    // Verifica se o e-mail é o do admin
-                    if (user.email === adminEmail) {
-                        isAdmin = true;
-                    }
-
                     // Armazenar no Firestore com o campo isAdmin
                     firestore.collection("usuarios").doc(user.uid).set({
                         email: user.email,
                         displayName: user.email.split("@")[0],  // Usando o e-mail para o nome
-                        isAdmin: isAdmin,
+                        isAdmin: false,  // Inicialmente, todos são comuns
                         banido: false
                     }).then(() => {
                         alert("Conta criada com sucesso!");
@@ -129,15 +121,24 @@
 
         // Função de verificação de admin
         function verificarSeAdmin(user) {
-            if (user.email === adminEmail) {
-                // Se for admin, exibe tela de admin
-                document.getElementById("loginScreen").style.display = "none";
-                document.getElementById("adminScreen").style.display = "block";
-            } else {
-                // Se for usuário comum, exibe tela de usuário
-                document.getElementById("loginScreen").style.display = "none";
-                document.getElementById("userScreen").style.display = "block";
-            }
+            firestore.collection("usuarios").doc(user.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const usuarioData = doc.data();
+                        if (usuarioData.isAdmin) {
+                            // Se for admin, exibe tela de admin
+                            document.getElementById("loginScreen").style.display = "none";
+                            document.getElementById("adminScreen").style.display = "block";
+                        } else {
+                            // Se for usuário comum, exibe tela de usuário
+                            document.getElementById("loginScreen").style.display = "none";
+                            document.getElementById("userScreen").style.display = "block";
+                        }
+                    }
+                })
+                .catch((error) => {
+                    alert("Erro ao verificar dados do usuário: " + error.message);
+                });
         }
 
         // Função de logout
@@ -151,10 +152,10 @@
             });
         }
 
-        // Função de verificação do UID
+        // Função de verificação do UID (Admin)
         function verificarUID() {
             const uid = document.getElementById("uidAdmin").value;
-            
+
             firebase.firestore().collection("usuarios").doc(uid).get()
                 .then((doc) => {
                     if (doc.exists) {
