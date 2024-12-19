@@ -3,16 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste do EP</title>
+    <title>Assista ao Meu EP</title>
 </head>
 <body>
-    <h1>Teste de Exibição do EP</h1>
-    <p>Quando você clicar no botão abaixo, o EP será aberto em uma nova guia.</p>
+    <h1>Assista ao Meu EP</h1>
+    <p>Clique no botão abaixo para assistir ao EP:</p>
 
-    <!-- Botão para abrir o EP -->
-    <a href="https://files.fm/f/p27svuckdy" target="_blank">
-        <button style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Assistir ao EP</button>
-    </a>
+    <!-- Botão para carregar o vídeo -->
+    <button id="playButton" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Assistir ao EP</button>
 
+    <!-- Div onde o vídeo será carregado -->
+    <div id="videoContainer"></div>
+
+    <script>
+        document.getElementById('playButton').addEventListener('click', function() {
+            // Código do script para o player do Files.fm
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://files.fm/embed/playerv2?hash=p27svuckdy&autoplay=off&autoload=off&w=100%&h=auto&poster_src=https://files.fm/thumb_video_picture.php?i=p27svuckdy';
+            script.id = 'filesfm_embed_js__p27svuckdy';
+            
+            // Inserir o script no contêiner do vídeo
+            document.getElementById('videoContainer').appendChild(script);
+
+            // Desabilitar o botão após o clique
+            document.getElementById('playButton').disabled = true;
+            document.getElementById('playButton').textContent = "Vídeo carregando...";
+        });
+    </script>
 </body>
 </html>
